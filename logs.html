@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Log Function Generator</title>
+    </head>
+    <body>
+        <h1>Log List Generator</h1>
+
+        <label>Start Number:
+            <input type="number" id="startNumber" value="2">
+        </label>
+        <br>
+        <label>End Number:
+            <input type="number" id="endNumber" value="10">
+        </label>
+        <br>
+        <label>subA
+            <input type="checkbox" id="subA">
+        </label>
+        <br><br>
+        <button onclick="generateLogFunction()">Generate & Copy</button>
+
+        <p><strong>Generated Functions</strong></p>
+        <textarea id="output" rows="10" cols="50" readonly wrap="soft"></textarea>
+
+        <script>
+            function generateLogFunction() {
+                const start = parseInt(document.getElementById('startNumber').value);
+                const end = parseInt(document.getElementById('endNumber').value);
+                const subA = document.getElementById('subA').checked;
+                const logList = [];
+
+                if (isNaN(start) || isNaN(end) || start > end) {
+                    alert('Please enter valid numbers where Start is less than or equal to End.');
+                    return;
+                }
+
+                if (!start == 0 && !end == 0) {
+                    for (let i = start; i <= end; i++) {
+                        logList.push(`log_${i}`);
+                    }
+                }
+                if (subA) logList.push("log_a");
+    
+                const resultList = logList.join(", ");
+                const resultListFinal = "logList := [" + resultList + "]"
+                const mathFuncs = "math_funcs(" + resultList + ")"
+
+                const funcSettingsList = [];
+                if (!start == 0 && !end == 0) {
+                    for (let i = start; i <= end; i++) {
+                        funcSettingsList.push(`math_func_settings(log_${i}, display := "\\log_{${i}}(#1)")`)
+                    }
+                }
+
+                if (subA) funcSettingsList.push(`math_func_settings(log_a, display := "\\log_{a}(#1)")`);
+
+                const funcSettingsFinal = funcSettingsList.join("; ");
+
+                const logSyntaxList = [];
+                if (!start == 0 && !end == 0) {
+                    for (let i = start; i <= end; i++) {
+                        logSyntaxList.push(`log_b(${i}, x) := log_${i}(x)`)
+                    }
+                }
+
+                if (subA) logSyntaxList.push(`log_b(a, x) := log_a(x)`)
+
+                const logSyntaxFinal = logSyntaxList.join("; ")
+
+                const output = document.getElementById('output');
+                output.value = resultListFinal + "\n" + mathFuncs + "\n" + funcSettingsFinal + "\n" + logSyntaxFinal;
+
+                output.select();
+                document.execCommand('copy');
+                alert('Copied to clipboard!');
+            }
+        </script>
+    </body>
+</html>
