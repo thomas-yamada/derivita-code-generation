@@ -50,11 +50,11 @@
                 const funcSettingsList = [];
                 if (!start == 0 && !end == 0) {
                     for (let i = start; i <= end; i++) {
-                        funcSettingsList.push(`math_func_settings(log_${i}, display := "\\log_{${i}}(#1)")`)
+                        funcSettingsList.push(`math_func_settings(log_${i}, display := "\\log_{${i}}\\left(#1\\right)")`)
                     }
                 }
 
-                if (subA) funcSettingsList.push(`math_func_settings(log_a, display := "\\log_{a}(#1)")`);
+                if (subA) funcSettingsList.push(`math_func_settings(log_a, display := "\\log_{a}\\left(#1\\right)")`);
 
                 const funcSettingsFinal = funcSettingsList.join("; ");
 
