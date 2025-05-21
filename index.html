@@ -17,16 +17,16 @@
         <input type="number" id="endNumber" value="10">
     </label>
     <br>
-    <label>subA
-        <input type="checkbox" id="subA">
-    </label>
-    <br>
-    <label>decimal
+    <label>decimal (bound by above)
         <input type="checkbox" id="decimal">
     </label>
     <br>
-    <label>entry
-        <input type="" text id="entry">
+    <label>custom bases (no "b")
+        <input type="checkbox" id="subA">
+    </label>
+    <br>
+    <label>custom bases entry
+        <input type="" text id="entry" placeholder="delta,Psi,a,p,int">
         <br><br>
         <button onclick="generateLogFunction()" style="width:22vw"><span id="copied">Generate & Copy</span></button>
 
@@ -59,7 +59,7 @@
                 }
                 let graby = document.getElementById('entry').value
                 console.log(graby)
-                let s = graby.split(',')
+                let s = graby.replace(/\s+/g, '').split(',')
                 console.log(s)
                 for (const item of s) {
                     logList_a.push(`log_${item}`)
