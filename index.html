@@ -20,13 +20,15 @@
     <label>subA
         <input type="checkbox" id="subA">
     </label>
+    <br>
     <label>decimal
         <input type="checkbox" id="decimal">
     </label>
+    <br>
     <label>entry
         <input type="" text id="entry">
         <br><br>
-        <button onclick="generateLogFunction()">Generate & Copy</button>
+        <button onclick="generateLogFunction()" style="width:22vw"><span id="copied">Generate & Copy</span></button>
 
         <p><strong>Generated Functions</strong></p>
         <textarea id="output" rows="10" cols="50" readonly wrap="soft"></textarea>
@@ -129,7 +131,6 @@
                         } else {
                             funcSettingsList.push(`math_func_settings(log_${item}, display:= "\\log_{${item}}\\left(#1\\right)")`)
                         }
-
                     }
                 }
                 const funcSettingsFinal = funcSettingsList.join("; ");
@@ -143,6 +144,18 @@
 
                 output.select();
                 document.execCommand('copy');
+                const copied = document.getElementById('copied');
+                
+                const originalText = copied.textContent;
+                const originalColor = copied.style.color;
+
+                copied.textContent = 'Copied';
+                copied.style.color = 'red';
+
+                setTimeout(() => {
+                    copied.textContent = originalText;
+                    copied.style.color = originalColor;
+                }, 1000);
 
             }
         </script>
