@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Log Function Generator</title>
-    </head>
-    <body>
-        <h1>Log List Generator</h1>
 
-        <label>Start Number:
-            <input type="number" id="startNumber" value="2">
-        </label>
-        <br>
-        <label>End Number:
-            <input type="number" id="endNumber" value="10">
-        </label>
-        <br>
-        <label>subA
-            <input type="checkbox" id="subA">
-        </label>
+<head>
+    <meta charset="UTF-8">
+    <title>Log Function Generator</title>
+</head>
+
+<body>
+    <h1>Log List Generator</h1>
+
+    <label>Start Number:
+        <input type="number" id="startNumber" value="2">
+    </label>
+    <br>
+    <label>End Number:
+        <input type="number" id="endNumber" value="10">
+    </label>
+    <br>
+    <label>subA
+        <input type="checkbox" id="subA">
+    </label>
+    <label>decimal
+        <input type="checkbox" id="decimal">
+    </label>
+    <label>entry
+        <input type="" text id="entry">
         <br><br>
         <button onclick="generateLogFunction()">Generate & Copy</button>
 
@@ -29,53 +36,116 @@
                 const start = parseInt(document.getElementById('startNumber').value);
                 const end = parseInt(document.getElementById('endNumber').value);
                 const subA = document.getElementById('subA').checked;
+                const decimal = document.getElementById('decimal').checked;
                 const logList = [];
-
+                const logList_d = [];
+                const logList_a = [];
                 if (isNaN(start) || isNaN(end) || start > end) {
                     alert('Please enter valid numbers where Start is less than or equal to End.');
                     return;
                 }
-
-                if (!start == 0 && !end == 0) {
-                    for (let i = start; i <= end; i++) {
-                        logList.push(`log_${i}`);
+                const start_tenth = Math.round(start * 10)
+                const end_tenth = Math.round(end * 10)
+                if (!start_tenth == 0 && !end_tenth == 0) {
+                    for (let i = start_tenth; i <= end_tenth; i++) {
+                        if (i % 10 === 0)
+                            logList.push(`log_${Math.trunc(i / 10)}`);
+                        else if (decimal) {
+                            logList_d.push(`log_${Math.trunc(i / 10)}_${(i % 10)}`);
+                        }
                     }
                 }
-                if (subA) logList.push("log_a");
-    
-                const resultList = logList.join(", ");
+                let graby = document.getElementById('entry').value
+                console.log(graby)
+                let s = graby.split(',')
+                console.log(s)
+                for (const item of s) {
+                    logList_a.push(`log_${item}`)
+                }
+
+                if (subA) {
+
+                    for (let i = 97; i < 123; i++)
+                        if (i !== 98) {
+                            //logList_a.push(`log_${String.fromCharCode(i)}`);
+                        }
+
+                }
+                let resultList = logList.join(",")
+                let resultList_d = logList_d.join(",")
+                const resultList_a = logList_a.join(",")
+
                 const resultListFinal = "logList := [" + resultList + "]"
-                const mathFuncs = "math_funcs(" + resultList + ")"
+                const resultListFinal_d = "logList_d := [" + resultList_d + "]"
+                const resultListFinal_a = "logList_a := [" + resultList_a + "]"
+
+
+                let mathFuncs = "math_funcs(" + resultList + ")"
+                if (subA && decimal) {
+                    resultList = logList.join(',') + ', '
+                    resultList_d = logList_d.join(',') + ', '
+                    mathFuncs = "math_funcs(" + resultList + resultList_d + resultList_a + ")"
+                } else if (decimal) {
+                    resultList = logList.join(',') + ', '
+                    mathFuncs = "math_funcs(" + resultList + resultList_d + ")"
+                } else if (subA) {
+                    resultList = logList.join(',') + ', '
+                    mathFuncs = "math_funcs(" + resultList + resultList_a + ")"
+                }
 
                 const funcSettingsList = [];
-                if (!start == 0 && !end == 0) {
-                    for (let i = start; i <= end; i++) {
-                        funcSettingsList.push(`math_func_settings(log_${i}, display := "\\log_{${i}}\\left(#1\\right)")`)
-                    }
-                }
-
-                if (subA) funcSettingsList.push(`math_func_settings(log_a, display := "\\log_{a}\\left(#1\\right)")`);
-
-                const funcSettingsFinal = funcSettingsList.join("; ");
-
                 const logSyntaxList = [];
-                if (!start == 0 && !end == 0) {
-                    for (let i = start; i <= end; i++) {
-                        logSyntaxList.push(`log_b(${i}, x) := log_${i}(x)`)
+                for (let i = start_tenth; i <= end_tenth; i++) {
+                    const whole = i % 10 === 0;
+                    if (whole) {
+                        const base = i / 10;
+                        funcSettingsList.push(`math_func_settings(log_${base}, display := "\\log_{${base}}\\left(#1\\right)")`)
+                        logSyntaxList.push(
+                            `log_b(${base}, x) := log_${base}(x)`
+                        );
+                    } else if (decimal) {
+                        const base_dec = (i / 10).toFixed(1);
+                        funcSettingsList.push(`math_func_settings(log_${Math.trunc(i / 10)}_${Math.trunc(i % 10)}, display := "\\log_{${base_dec}}\\left(#1\\right)")`)
+                        logSyntaxList.push(
+                            `log_b(${base_dec}, x) := log_${Math.trunc(i / 10)}_${i % 10}(x)`
+                        );
                     }
                 }
+                if (subA) {
+                    for (let i = 97; i < 123; i++) {
+                        if (i !== 98) {
+                            //funcSettingsList.push(`math_func_settings(log_${String.fromCharCode(i)}, display := "\\log_{${String.fromCharCode(i)}}\\left(#1\\right)")`);
+                            //logSyntaxList.push(`log_b(${String.fromCharCode(i)}, x) := log_${String.fromCharCode(i)}(x)`)
+                        }
 
-                if (subA) logSyntaxList.push(`log_b(a, x) := log_a(x)`)
+                    }
+                    for (item of s) {
+                        logSyntaxList.push(`log_b(${item}, x) := log_${item}(x)`)
+                    }
+                    for (item of s) {
+                        if (item.length >= 2) {
+                            let item1 = '\\' + item
+                            funcSettingsList.push(`math_func_settings(log_${item}, display:= "\\log_{${item1}}\\left(#1\\right)")`)
+                        } else {
+                            funcSettingsList.push(`math_func_settings(log_${item}, display:= "\\log_{${item}}\\left(#1\\right)")`)
+                        }
 
+                    }
+                }
+                const funcSettingsFinal = funcSettingsList.join("; ");
                 const logSyntaxFinal = logSyntaxList.join("; ")
 
                 const output = document.getElementById('output');
-                output.value = resultListFinal + "\n" + mathFuncs + "\n" + funcSettingsFinal + "\n" + logSyntaxFinal;
+                output.value = resultListFinal + "\n" + resultListFinal_d + "\n" + mathFuncs + "\n" + funcSettingsFinal + "\n" + logSyntaxFinal;
+                if (subA) {
+                    output.value = resultListFinal + "\n" + resultListFinal_d + "\n" + resultListFinal_a + "\n" + mathFuncs + "\n" + funcSettingsFinal + "\n" + logSyntaxFinal;
+                }
 
                 output.select();
                 document.execCommand('copy');
-                alert('Copied to clipboard!');
+
             }
         </script>
-    </body>
+</body>
+
 </html>
