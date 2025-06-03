@@ -103,13 +103,13 @@
                         const base = i / 10;
                         funcSettingsList.push(`math_func_settings(log_${base}, display := "\\log_{${base}}\\left(#1\\right)")`)
                         logSyntaxList.push(
-                            `log_b(${base}, x) := log_${base}(x)`
+                            `log_${base}(x) := log_b(${base}, x)`
                         );
                     } else if (decimal) {
                         const base_dec = (i / 10).toFixed(1);
                         funcSettingsList.push(`math_func_settings(log_${Math.trunc(i / 10)}_${Math.trunc(i % 10)}, display := "\\log_{${base_dec}}\\left(#1\\right)")`)
                         logSyntaxList.push(
-                            `log_b(${base_dec}, x) := log_${Math.trunc(i / 10)}_${i % 10}(x)`
+                            `log_${Math.trunc(i / 10)}_${i % 10}(x) := log_b(${base_dec}, x)`
                         );
                     }
                 }
@@ -122,7 +122,7 @@
 
                     }
                     for (item of s) {
-                        logSyntaxList.push(`log_b(${item}, x) := log_${item}(x)`)
+                        logSyntaxList.push(`log_${item}(x) := log_b(${item}, x)`)
                     }
                     for (item of s) {
                         if (item.length >= 2) {
